@@ -2,100 +2,227 @@ import random
 import sys
 
 ## Varaibles For Use During Gameplay
-QuestionCountPerLevel = 5  ## Dynamic option for asking questions, you can change how many questions game will ask per level.
-OperatorsForUse = ["+","-","*","/","%"]
-MaxValueOfQuestionNumberDigit = 15  ## Dynamic option for questions, you can change which number will be maximum of questions digits. This can be also used for setting game easy or hard.
-UsersStarCount = 0  ## How many stars user have. Please don't make a change, so player will be start with 0 stars.
-UsersTotalErrorCount = 0  ## How many mistakes user have during all game. Please don't make a change, so player will be start with 0 mistake.
-AnswerOfCurrentQuestion = 0
 
-def BuildLevelsAndQuestions(Level):
-    for i in range(1, QuestionCountPerLevel + 1):  ## Building questions for current level with for loop
-        print("\n")
-        Number1 = random.randint(1, MaxValueOfQuestionNumberDigit)  ## Randomly selecting 2 numbers for use in question
-        Number2 = random.randint(1, MaxValueOfQuestionNumberDigit)
-        SelectedOperatorIndex = random.randint(0, Level - 1)
-        SelectedOperator = OperatorsForUse[
-            SelectedOperatorIndex]  ## Selecting operator randomly which can be usable for current level
-        Question = str(Number1) + " " + str(SelectedOperator) + " " + str(Number2)  ## Make a question string
-        global AnswerOfCurrentQuestion
-        AnswerOfCurrentQuestion = 0
-        if SelectedOperator == OperatorsForUse[0]:  ## Determining the mathematically calculating progress of answer.
-            AnswerOfCurrentQuestion = Number1 + Number2
-        if SelectedOperator == OperatorsForUse[1]:
-            AnswerOfCurrentQuestion = Number1 - Number2
-        if SelectedOperator == OperatorsForUse[2]:
-            AnswerOfCurrentQuestion = Number1 * Number2
-        if SelectedOperator == OperatorsForUse[3]:
-            AnswerOfCurrentQuestion = Number1 / Number2
-        if SelectedOperator == OperatorsForUse[4]:
-            AnswerOfCurrentQuestion = Number1 % Number2
-        ## Asking question
-        print("Question " + str(i), "Level " + str(Level))
-        print("\n")
-        print(Question)
-        print(">>>")
-        TakeInputFromUserAndControl(AnswerOfCurrentQuestion)  ## Time to control type of users input
-def TakeInputFromUserAndControl(AnswerOfCurrentQuestion): ## BONUS PART
-    global UsersStarCount
-    global UsersTotalErrorCount
-    AnswerOfCurrentQuestionFromInput = input()  ## Take input from user
-    IsInputInt = False
-    try:   ## Try to make it an integer
-        val = int(AnswerOfCurrentQuestionFromInput)
-        IsInputInt = True
-    except ValueError:   ## If can't
-        IsInputInt = False   ## Says its not an integer
-    if IsInputInt:   ## If it is an integer
-        AnswerOfCurrentQuestionFromInput = int(AnswerOfCurrentQuestionFromInput)   ## Convert the string-based input value to an integer for progress
-        if AnswerOfCurrentQuestionFromInput == AnswerOfCurrentQuestion:   ## Controlling correction of solution and users answer
-            UsersStarCount = UsersStarCount + 1   ## Give stars to correct answer
-            print("\n")
-            print("Correct! You gain an additional star! You now have " + str(UsersStarCount) + " out of " + str(
-                QuestionCountPerLevel) + " stars!")
-        else:   ## If users answer is wrong, say it and increase UsersTotalErrorCount
-            print("\n")
-            print("Wrong! You do not gain any stars for that question! You still have " + str(
-                UsersStarCount) + " out of " + str(QuestionCountPerLevel) + " stars!")
-            UsersTotalErrorCount = UsersTotalErrorCount + 1
-    else:    ## If users input is not an integer make warning
-        print("ERROR! Un-acceptable entry detected, try again please!")
-        TakeInputFromUserAndControl(AnswerOfCurrentQuestion)  ## And call method again to restart this progres
+## Word List
+WordList = ["black","car","plane","cat","sea","ocean","fruit","food","directory","blabla"]
+## Defination List
+WordDefinations = ["Having the darkest colour there is, like the colour of a very dark night.",
+            "A road vehicle with an engine.",
+            "A vehicle designed for air travel.",
+            "A small animal with fur, four legs, a tail, and claws.",
+            "The salty water that covers a large part of the surface of the earth.",
+            "A very large sea area.",
+            "The soft part containing seeds that is produced by a plant.",
+            "Something that people and animals eat to keep them alive.",
+            "A book that gives a list of names, addresses, or other facts.",
+            "yyyyblayyyy"]
+Dictionary = []
+global LastSearchedInput
+global LastRecommendList
 def StartGame():
-    print("\n")
-    print("\n")
-    print("Welcome To MathMini!")   ## Welcome user
-    print("____________________")
-    print("\n")
-    print("Now, you will get some information abouth your level and gameplay. After, your questions will be asked one by one.")
-    print("\n")
-    ## Make the warning of integer-float thing. The reason is that why we doing this (and converting answers to integer all the time is because the conculusion of 3/7 = 0.42857142857.
-    #  Player will not want to type this, so he can easily cut the part which comes after dot(.) or comma(,) and type it. Answer will be accepted)
-    print("IMPORTANT! All the answers will be type of integer: If an solution of a question is type of float or etc., " + "\n" +
-          "program will automatically convert it to an integer. So; if the question is 3/2; You should" + "\n" +
-          "NOT type 1.5, you should type 1 because of converting an float or double to integer means" + "\n" + "just taking the part of number which is before coma or dot.")
-    print("\n")
-    for Level in range(1, 6):  ## Dynamically building levels with for loop
-        print("\n")
-        print("Your Level Is " + str(Level))
-        print("Possible length of Numbers: " + str(len(str(MaxValueOfQuestionNumberDigit))))   ## Calculating possible lenght of digits which will be use in questions
-        print("Possible number of Operators: " + str(Level))   ## Calculating the operator count which will user progress with in current level
-        BuildLevelsAndQuestions(Level)
-        print("\n")
-        print("Level " + str(Level) + " Finish!")   ## When level finish, says to user
-        global UsersStarCount
-        if UsersStarCount >= 3:   ## If user have enough stars to pass other level
-            print("You have enough stars this level, time to move on!")
-            UsersStarCount = 0   ## Make star count zero because of starting a new level
-            if Level == 5:   ## If user finishes last level which is 5, says game beaten and how many mistakes user has during all game
-                print("Amazing! You beat the game! You answered a total of " + str(UsersTotalErrorCount) + " answers wrong this attempt. You can press any key to quit.")
-                input("Press Enter key to say goodbye!")
-                sys.exit()  ## Exit game clearly
-        else:
-            print("\n")  ## If user don't have enough star, says game will end, goodby and how many mistakes user has during all game.
-            print("You do not have enough stars to move on to the next level, this as far as you go!")
-            print("Your total mistake count is = " + str(UsersTotalErrorCount) + ", Goodbye...")
-            input("Press Enter key to say goodbye!")
-            sys.exit()   ## Exit game clearly
-StartGame()   ## Start the game by calling function.
+    print ("")
+    print ("Welcome to the Dictionary Game")
+    print ("")
+    print ("INFORMATION")
+    print ("You already have " + str(len(WordList)) + " word with their definations.")
+    BuildDictionary(WordList,WordDefinations)
+def BuildDictionary(WordList,WordDefinations):
+    print ("")
+    print ("Building Dictionary...")
+    for i in range(len(WordList)):
+        Dictionary.append(WordList[i])
+        Dictionary.append(WordDefinations[i])
+    print("Dictionary Built!")
+    print ("")
+    ShowMainOptions()
+def ShowMainOptions():
+    global LastRecommendList
+    global LastSearchedInput
+    LastRecommendList = []
+    LastSearchedInput = ""
+    print("Please select one of these options:")
+    print("1. Add a new word")
+    print("2. Update an existing word")
+    print("3. Delete an existing word")
+    print("4. Display a word's definition")
+    UsersSelectedOption = raw_input(">>>")
+    if UsersSelectedOption == "1" or UsersSelectedOption == "2" or UsersSelectedOption == "3" or UsersSelectedOption == "4":
+        if UsersSelectedOption == "1":
+            AddDefination()
+        if UsersSelectedOption == "2":
+            UpdateDefination()
+        if UsersSelectedOption == "3":
+            DeleteDefination()
+        if UsersSelectedOption == "4":
+            DisplayDefination()
+    else:
+        print ("You type a wrong option, please try again:")
+        ShowMainOptions()
+def AddDefination():
+    print("What word do you want to add?")
+    Input = raw_input(">>>")
+    print("Please add in a definition for this word(" + Input + "):")
+    InputDefination = raw_input(">>>")
+    Dictionary.append(Input)
+    Dictionary.append(InputDefination)
+    print(Input + " added in correctly!")
+    print("")
+    ContinueOrNot()
+def UpdateDefination():
+    global IndexOfInput
+    print("What word do you want to update?")
+    Input = raw_input(">>>")
+    IsFounded = False
+    for i in range(len(Dictionary)):
+        if Input == Dictionary[i]:
+            IndexOfInput = i
+            IsFounded = True
+            break
+    if IsFounded:
+        ContiuneUpdate(IndexOfInput)
+    else:
+        CannotFoundWordUpdate()
+def ContiuneUpdate(IndexOfInput):
+    print("Please write in a new definition" + "(" +Dictionary[IndexOfInput] + "):")
+    InputDefination = raw_input(">>>")
+    Dictionary[IndexOfInput + 1] = InputDefination
+    print(Dictionary[IndexOfInput] + " was updated correctly!")
+    print("")
+    ContinueOrNot()
+def CannotFoundWordUpdate():
+    print("Error the word is not in the dictionary! You may perform these actions:")
+    print("1. Retry with another word.")
+    print("2, Return to main menu")
+    Desicion = raw_input(">>>")
+    if Desicion == "1" or Desicion == "2":
+        if Desicion == "1":
+            UpdateDefination()
+        if Desicion == "2":
+            ShowMainOptions()
+    else:
+        print ("You type a wrong option, please try again:")
+        CannotFoundWordUpdate()
+def DeleteDefination():
+    global IndexOfInput
+    print("What word do you want to delete?")
+    Input = raw_input(">>>")
+    IsFounded = False
+    for i in range(len(Dictionary)):
+        if Input == Dictionary[i]:
+            IndexOfInput = i
+            IsFounded = True
+            break
+    if IsFounded:
+        ContiuneDelete(IndexOfInput)
+    else:
+        CannotFoundWordDelete()
+def ContiuneDelete(IndexOfInput):
+    Word = Dictionary[IndexOfInput]
+    Dictionary.pop(IndexOfInput)
+    Dictionary.pop(IndexOfInput)
+    print(Word + " and its defination was deleted correctly!")
+    print("")
+    for i in range(len(Dictionary)):
+        print(Dictionary[i])
+    ContinueOrNot()
+def CannotFoundWordDelete():
+    print("Error the word is not in the dictionary! You may perform these actions:")
+    print("1. Retry with another word.")
+    print("2, Return to main menu")
+    Desicion = raw_input(">>>")
+    if Desicion == "1" or Desicion == "2":
+        if Desicion == "1":
+            DeleteDefination()
+        if Desicion == "2":
+            ShowMainOptions()
+    else:
+        print ("You type a wrong option, please try again:")
+        CannotFoundWordDelete()
+def DisplayDefination():
+    global IndexOfInput
+    print("Please enter a search term:")
+    Input = raw_input(">>>")
+    global LastSearchedInput
+    LastSearchedInput = Input
+    IsFounded = False
+    for i in range(len(Dictionary)):
+        if Input == Dictionary[i]:
+            IndexOfInput = i
+            IsFounded = True
+            break
+    if IsFounded:
+        DisplayDefinationOfInput(IndexOfInput)
+    else:
+        SearchForSubtring(Input)
+def SearchForSubtring(Input):
+    global LastRecommendList
+    global RecommendList
+    RecommendList = []
+    LastRecommendList = []
+    for a in range(0,len(Dictionary),2):
+        if Dictionary[a].__contains__(Input):
+            RecommendList.append(Dictionary[a])
+    if len(RecommendList) > 0:
+        print ("Here are all the words that match the search term, please choose that word you want:")
+        LastRecommendList = RecommendList
+        ShowMatches(RecommendList)
+    else:
+        NoMatchError()
+def ShowMatches(RecommendList):
+    OptionNumberList = []
+    for i in range(len(RecommendList)):
+        print(str(i + 1) + ":" + " " + RecommendList[i])
+        OptionNumberList.append(i+1)
+    UserSelectBestMatches(OptionNumberList)
+def UserSelectBestMatches(OptionNumberList):
+    Desicion = raw_input(">>>")
+    Contains = False
+    KelimeninIndexi = 0
+    for i in range(len(OptionNumberList)):
+        if Desicion == str(OptionNumberList[i]):
+            KelimeninIndexi = OptionNumberList[i]
+            Contains = True
+            break
+    if Contains:
+        WordToDisplay = LastRecommendList[KelimeninIndexi-1]
+        IndexOfWordToDisplay = Dictionary.index(WordToDisplay)
+        DisplayDefinationOfInput(IndexOfWordToDisplay)
+    else:
+        print ("You type a wrong match number, please try again:")
+        SearchForSubtring(LastSearchedInput)
+def NoMatchError():
+    print("Error no word matches this search term, theese are some options you can select;")
+    print("1.Try with a new search term")
+    print("2.Continue to main menu")
+    print("3.Exit Game")
+    Desicion = raw_input(">>>")
+    if Desicion == "1" or Desicion == "2" or Desicion == "3":
+        if Desicion == "1":
+            DisplayDefination()
+        if Desicion == "2":
+            ShowMainOptions()
+        if Desicion == "3":
+            print ("Goodbye!")
+            sys.exit(0)
+    else:
+        print ("You type a wrong option, please try again:")
+        NoMatchError()
+def DisplayDefinationOfInput(IndexOfInput):
+    print(Dictionary[IndexOfInput]+":"+" "+Dictionary[IndexOfInput+1])
+    ContinueOrNot()
+def ContinueOrNot():
+    print("Would you like to continue or exit?")
+    print("1.Continue")
+    print("2.Exit")
+    Desicion = raw_input(">>>")
+    if Desicion == "1" or Desicion == "2":
+        if Desicion == "1":
+            ShowMainOptions()
+        if Desicion == "2":
+            print ("Goodbye!")
+            sys.exit(0)
+    else:
+        print ("You type a wrong option, please try again:")
+        ContinueOrNot()
+StartGame()
 
